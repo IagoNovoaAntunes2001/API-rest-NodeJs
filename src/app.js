@@ -1,8 +1,17 @@
+'use strict';
+
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const app = express();
 const router = express.Router();
+
+// Connection to database
+mongoose.connect('mongodb+srv://Iago:novoa@nodestr-4z5jj.azure.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true});
+
+// Models
+const Product = require('./models/product');
 
 // Routes
 const indexRoute = require('./routes/index-route');
