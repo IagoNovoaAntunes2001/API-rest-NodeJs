@@ -8,7 +8,8 @@ const app = express();
 const router = express.Router();
 
 // Connection to database
-mongoose.connect('mongodb+srv://Iago:novoa@nodestr-4z5jj.azure.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true});
+mongoose.connect('mongodb+srv://Iago:novoa@nodestr-4z5jj.azure.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false });
+mongoose.set('useFindAndModify', false);
 
 // Models
 const Product = require('./models/product');

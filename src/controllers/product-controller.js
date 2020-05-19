@@ -2,59 +2,69 @@
 
 const mongoose = require('mongoose');
 const Product = mongoose.model('Product');
+const Validator = require('../validators/fluent-validator');
+const repository = require('../repositories/product-repository');
 
-exports.get = (req, res, next) => {
-    Product.find({ active: true }, '_id title price slug description price').then(o => {
-        res.status(200).send(o);
-    }).catch(e => {
-        res.status(400).send({ message: 'Failed to find the product', data: e });
-    });;
+exports.get = async (req, res, next) => {
+    try {
+        var data = await repository.get();
+        res.status(200).send(data);
+    }catch(e) {
+        res.status(500).send({message: 'Failed to process your request'});
+    }
 };
 
-exports.getById = (req, res, next) => {
-    Product.findById(req.params.id).then(o => {
-        res.status(200).send(o);
-    }).catch(e => {
+exports.getById = async (req, res, next) => {
+    try {
+        var data = await repository.getById(req.params.id);
+        res.status(200).send(data);
+    }catch(e){
         res.status(400).send({ message: 'Failed to find the product', data: e });
-    });;
+    }
 };
 
-exports.getBySlug = (req, res, next) => {
-    Product.findOne({slug: req.params.slug, active: true}, '_id title price slug description price').then(o => {
-        res.status(200).send(o);
-    }).catch(e => {
-        res.status(400).send({ message: 'Failed to find the product', data: e });
-    });;
+exports.getBySlug = async (req, res, next) => {
+    try {
+        var data = await repository.getBySlug(req.params.slug);
+        res.status(200).send(data);
+    }catch(e){
+        res.status(500).send({ message: 'Failed to find the product', error: e });
+    }
 };
 
-exports.post = (req, res, next) => {
-    var product = new Product(req.body);
-    product.save().then(o => {
+exports.post = async (req, res, next) => {
+    let contract = new Validator();
+    contract.hasMinLen(req.body.title, 3, 'The title must has 3 caracteres');
+    contract.hasMinLen(req.body.slug, 3, 'The slug must has 3 caracteres');
+    contract.hasMinLen(req.body.description, 3, 'The description must has 3 caracteres');
+
+    if(!contract.isValid()) {
+        res.status(400).send(contract.errors()).end();
+        return;
+    }
+
+    try{
+        await repository.create(req.body);
         res.status(201).send({ message: 'Product has saved with success!' });
-    }).catch(e => {
-        res.status(400).send({ message: 'Product has failed to save', data: e });
-    });
+    }catch(e){
+        res.status(500).send({ message: 'Product has failed to save', data: e });
+    }
 };
 
-exports.put = (req, res, next) => {
-    Product.findByIdAndUpdate(req.params.id, {
-        $set: {
-            title: req.body.title,
-            slug: req.body.slug,
-            description: req.body.description,
-            price: req.body.price
-        }
-    }).then(o => {
+exports.put = async (req, res, next) => {
+    try{
+        await repository.update(req.params.id, req.body);
         res.status(200).send({ message:'Product has update with success!' });
-    }).catch(e => {
+    }catch(e){
         res.status(400).send({ message: 'Failed to update the product', data: e });
-    });
+    }
 };
 
-exports.delete = (req, res, next) => {
-    Product.findByIdAndDelete(req.body.id).then(o => {
+exports.delete = async (req, res, next) => {
+    try{
+        await repository.delete(req.body.id);
         res.status(200).send({ message:'Product has delete with success!' });
-    }).catch(e => {
+    }catch(e){
         res.status(400).send({ message: 'Failed to delete the product', data: e });
-    });
+    }
 };
