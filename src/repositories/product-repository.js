@@ -3,6 +3,10 @@
 const mongoose = require('mongoose');
 const Product = mongoose.model('Product');
 
+exports.authenticate = async (data) => {
+    return await Product.findOne({ title: data.title, active: data.active }, '_id title price slug description price');
+}
+
 exports.get = async () => {
     return await Product.find({ active: true }, '_id title price slug description price');
 }

@@ -28,6 +28,15 @@ const schema = new Schema({
         type: Boolean,
         required: [true, 'The active is required'],
         default: true
+    },
+    image_base64: {
+        type: String,
+        trim: true
+    },
+    image_url: {
+        type: String,
+        required: [true, 'The url of image is required'],
+        trim: true
     }
 });
 

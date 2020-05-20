@@ -1,9 +1,10 @@
 'use strict';
 
-const mongoose = require('mongoose');
-const Product = mongoose.model('Product');
 const Validator = require('../validators/fluent-validator');
 const repository = require('../repositories/product-repository');
+const guid = require('guid');
+const azure = require('azure-storage');
+const config = require('../config');
 
 exports.get = async (req, res, next) => {
     try {
@@ -44,10 +45,77 @@ exports.post = async (req, res, next) => {
     }
 
     try{
-        await repository.create(req.body);
+
+        var filename = '';
+
+        if (req.body.image_base64 != null) {
+            // Create blob service
+            const blobSvc = azure.createBlobService(config.containerConnectionString);
+
+            filename = guid.raw().toString() + '.jpg';
+            let matches = req.body.image_base64.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+            let type = matches[1];
+            let buffer = Buffer.from(matches[2], 'base64');
+
+             // Salva a imagem
+            await blobSvc.createBlockBlobFromText('product-images', filename, buffer, {
+                contentType: type
+            }, (error, result, response) => {
+                if (error) {
+                    filename = 'default-product.png'
+                }
+            });
+
+        }
+
+        await repository.create({
+            title: req.body.title,
+            slug: req.body.slug,
+            description: req.body.description,
+            price: req.body.price,
+            active: true,
+            image_base64: 'https://noderestapi.blob.core.windows.net/product-images/' + filename,
+            image_url: req.body.image_url
+        });
+
         res.status(201).send({ message: 'Product has saved with success!' });
+
     }catch(e){
+        console.log(e);
         res.status(500).send({ message: 'Product has failed to save', data: e });
+    }  
+};
+
+exports.authenticate = async(req, res, next) => {
+    try {
+        const product = await repository.authenticate({
+            title: req.body.title,
+            active: req.body.active
+        });
+
+        if (!product) {
+            res.status(404).send({
+                message: 'Product is invalida'
+            });
+            return;
+        }
+
+        const token = await authService.generateToken({
+            title: repository.title,
+            active: product.active
+        });
+
+        res.status(201).send({
+            token: token,
+            data: {
+                title: product.title,
+                name: product.title
+            }
+        });
+    } catch (e) {
+        res.status(500).send({
+            message: 'Failed to process your request'
+        });
     }
 };
 
