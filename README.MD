@@ -61,6 +61,8 @@ Pacotes utilizados no desenvolvimento(Todos se encontram no package.json)
 - jsonwebtoken: https://www.npmjs.com/package/jsonwebtoken
 - md5: https://www.npmjs.com/package/md5
 - mongoose: https://www.npmjs.com/package/mongoose
+Salvamos o token no localStorage na primeira requisicao e então usamos esse token até expirar. Ao passar um dia, refazemos o token e salvamos novamente no localStorage. (quando criamos o token, estabelecemos um dia).
+- node-localstorage: https://www.npmjs.com/package/node-localstorage
 Dependências de desenvolvedor:
 - nodemon: https://www.npmjs.com/package/nodemon
 
