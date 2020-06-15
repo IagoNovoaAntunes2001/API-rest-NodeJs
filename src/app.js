@@ -9,7 +9,7 @@ const app = express();
 const router = express.Router();
 
 // Connection to database
-mongoose.connect(config.connectionString, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false });
+mongoose.connect(config.connectionStringToHeroku, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false });
 mongoose.set('useFindAndModify', false);
 
 // Models
