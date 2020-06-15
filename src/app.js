@@ -14,15 +14,18 @@ mongoose.set('useFindAndModify', false);
 
 // Models
 const Product = require('./models/product');
+const User = require('./models/user');
 
 // Routes
 const indexRoute = require('./routes/index-route');
 const productRoute = require('./routes/product-route');
+const userRoute = require('./routes/user-route');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/', indexRoute);
 app.use('/products', productRoute);
+app.use('/users', userRoute);
 
 module.exports = app;

@@ -5,8 +5,9 @@ const router = express.Router();
 
 router.get('/', (req, res, next) => {
     res.status(200).send({
-        title: "Node Api",
-        version: "0.0.1"
+        title: 'Node API rest + MongoDB(Mlab). API do workshop',
+        version: '1.0',
+        description: 'Essa API foi elaborada no padrão MVC, feita para ser utilizada na palestra de flutter.'
     });
 });
 

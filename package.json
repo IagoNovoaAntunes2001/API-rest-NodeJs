@@ -4,7 +4,7 @@
   "description": "Uma api criada para o workshop com foco de aprendizado em flutter/dart.",
   "main": "index.js",
   "scripts": {
-    "start": "node ./bin/server.js"
+    "start": "nodemon ./bin/server.js"
   },
   "author": "Iago Novoa",
   "license": "ISC",
@@ -16,6 +16,7 @@
     "guid": "0.0.12",
     "http": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
+    "md5": "^2.2.1",
     "mongoose": "^5.9.14"
   },
   "devDependencies": {

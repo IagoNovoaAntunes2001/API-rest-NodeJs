@@ -86,39 +86,6 @@ exports.post = async (req, res, next) => {
     }  
 };
 
-exports.authenticate = async(req, res, next) => {
-    try {
-        const product = await repository.authenticate({
-            title: req.body.title,
-            active: req.body.active
-        });
-
-        if (!product) {
-            res.status(404).send({
-                message: 'Product is invalida'
-            });
-            return;
-        }
-
-        const token = await authService.generateToken({
-            title: repository.title,
-            active: product.active
-        });
-
-        res.status(201).send({
-            token: token,
-            data: {
-                title: product.title,
-                name: product.title
-            }
-        });
-    } catch (e) {
-        res.status(500).send({
-            message: 'Failed to process your request'
-        });
-    }
-};
-
 exports.put = async (req, res, next) => {
     try{
         await repository.update(req.params.id, req.body);

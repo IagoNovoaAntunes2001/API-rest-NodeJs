@@ -7,7 +7,7 @@ exports.generateToken = async (data) => {
 
 exports.decodeToken = async (token) => {
     return await jwt.verify(token, global.SALT_KEY);
-}
+} 
 
 exports.authorize = (req, res, next) => {
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -17,7 +17,7 @@ exports.authorize = (req, res, next) => {
             message: 'Access restricted'
         });
     } else {
-        jwt.verify(token, global.SALT_KEY, function (error, decoded) {
+        jwt.verify(token, global.SALT_KEY, (error, decoded) => {
             if (error) {
                 res.status(401).json({
                     message: 'Token invalid'
