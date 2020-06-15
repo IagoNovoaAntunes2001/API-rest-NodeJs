@@ -22,8 +22,19 @@ const productRoute = require('./routes/product-route');
 const userRoute = require('./routes/user-route');
 const authenticateRoute = require('./routes/authenticate-route');
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({
+    limit: '5mb'
+}));
+
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// Habilita o CORS
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, x-access-token');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    next();
+});
 
 app.use('/', indexRoute);
 app.use('/products', productRoute);
