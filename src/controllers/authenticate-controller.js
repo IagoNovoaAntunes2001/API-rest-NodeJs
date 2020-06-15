@@ -1,6 +1,7 @@
 const Validator = require('../validators/fluent-validator');
 const repository = require('../repositories/authenticate-repository');
 const authService = require('../services/auth-services');
+const verifyToken = require('../utils/verify-token');
 const md5 = require('md5');
 
 exports.authenticate = async (req, res, next) => {
@@ -23,12 +24,7 @@ exports.authenticate = async (req, res, next) => {
             return;
         }
 
-        const token = await authService.generateToken({
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            roles: user.roles
-        });
+        let token = await verifyToken(user);
 
         res.status(201).send({
             token: token,
@@ -39,6 +35,7 @@ exports.authenticate = async (req, res, next) => {
             }
         });
     } catch (error) {
+        console.log(error);
         res.status(500).send({
             message: 'Fail to process your request'
         });
